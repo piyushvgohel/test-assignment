@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <title>Pacemake</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script language="javascript">
+        $(document).ready(function(){
+            $("#scrape_data").click(function(){
+                $.ajax({url: "http://localhost:8000/pacemaker/api/scrape", success: function(result){
+                    alert("Data Extraction Done.")
+                }});
+            });
+
+            var minlength = 3;
+
+            $("#model_number").keyup(function () {
+                value = $(this).val();
+                if (value.length >= minlength ) {
+                    $.ajax({url: "http://localhost:8000/pacemaker/api/search?q="+value, success: function(result){
+                        var i;
+                        $("#search_data > tbody").empty();
+                        var table_body = "<tbody>";
+                        for(i=0; i<result.length; i++){
+                            table_body+='<tr>';
+                            table_body+="<td>"+result[i]['name']+"</td>";
+                            table_body+="<td>"+result[i]['model_number']+"</td>";
+                            table_body+="<td>"+result[i]['dimensions_description']+"</td>";
+                            table_body+='</tr>';
+                        }
+                        table_body += "</tbody>"       
+                        $("#search_data").append(table_body)
+                    }});
+                }
+            });
+        })
+            
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <button name="scrape_data" id="scrape_data" class="btn btn-primary">Scrape Data From Pacemake</button>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col-sm-12">
+                        <div class="form-group">
+                                <label for="Name">Name:</label>
+                                <input type="text" class="form-control" id="model_number">
+                        </div>
+                </div>
+                <div class="col-sm-12">
+                    <table class="table table-striped" id="search_data">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Model Number</th>
+                                <th>Dimensions Description</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
